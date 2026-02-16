@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ student.user.get_full_name }} - Student Profile{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <!-- Left Column - Profile Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-body text-center">
+                        {% if student.profile_picture %}
+                            <img src="{{ student.profile_picture.url }}" alt="Profile" 
+                                 class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" 
+                                 style="width: 150px; height: 150px;">
+                                <h1 class="mb-0">{{ student.user.first_name|first|upper }}{{ student.user.last_name|first|upper }}</h1>
+                            </div>
+                        {% endif %}
+                        
+                        <h4 class="fw-bold">{{ student.user.get_full_name }}</h4>
+                        <p class="text-muted mb-1">{{ student.department }}</p>
+                        <p class="text-muted small">{{ student.university.name }}</p>
+                        
+                        <div class="d-flex justify-content-center gap-3 my-3">
+                            <div class="text-center">
+                                <h5 class="mb-0">⭐ {{ student.rating }}</h5>
+                                <small class="text-muted">Rating</small>
+                            </div>
+                            <div class="text-center">
+                                <h5 class="mb-0">{{ student.projects_completed }}</h5>
+                                <small class="text-muted">Projects</small>
+                            </div>
+                        </div>
+                        
+                        {% if student.available_for_projects %}
+                            <span class="badge bg-success"><i class="bi bi-check-circle"></i> Available</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Not Available</span>
+                        {% endif %}
+                        
+                        <hr>
+                        
+                        {% if student.portfolio_url %}
+                        <a href="{{ student.portfolio_url }}" target="_blank" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-link-45deg"></i> Portfolio
+                        </a>
+                        {% endif %}
+                        
+                        {% if student.resume %}
+                        <a href="{{ student.resume.url }}" target="_blank" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-download"></i> Download Resume
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Academic Info Card -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h6 class="mb-0"><i class="bi bi-mortarboard"></i> Academic Information</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <strong>Student ID:</strong>
+                            <p class="text-muted mb-0">{{ student.student_id }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Department:</strong>
+                            <p class="text-muted mb-0">{{ student.department }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <strong>Year:</strong>
+                            <p class="text-muted mb-0">{{ student.get_year_display }}</p>
+                        </div>
+                        <div class="mb-0">
+                            <strong>GPA:</strong>
+                            <p class="text-muted mb-0">
+                                {{ student.gpa|default:"Not disclosed" }}
+                                {% if student.gpa %}
+                                    <span class="badge bg-{% if student.gpa >= 8 %}success{% elif student.gpa >= 6 %}warning{% else %}secondary{% endif %}">
+                                        {% if student.gpa >= 8 %}Excellent
+                                        {% elif student.gpa >= 6 %}Good
+                                        {% else %}Average{% endif %}
+                                    </span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column - Details -->
+            <div class="col-lg-8">
+                <!-- About -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-person"></i> About</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="mb-0">{{ student.bio|default:"No bio available" }}</p>
+                    </div>
+                </div>
+                
+                <!-- Skills -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-tools"></i> Skills</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if student.get_skills_list %}
+                            {% for skill in student.get_skills_list %}
+                                <span class="badge bg-primary me-2 mb-2 fs-6">{{ skill }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">No skills listed</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Preferred Domains -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-bookmark"></i> Preferred Domains</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if student.get_preferred_domains_list %}
+                            {% for domain in student.get_preferred_domains_list %}
+                                <span class="badge bg-success me-2 mb-2 fs-6">{{ domain }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <p class="text-muted mb-0">No preferences set</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Project History -->
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Project History</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if student.assigned_projects.exists %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Project</th>
+                                        <th>Company</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for project in student.assigned_projects.all|slice:":5" %}
+                                    <tr>
+                                        <td>{{ project.title }}</td>
+                                        <td>{{ project.get_poster_name }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'in_progress' %}primary{% else %}secondary{% endif %}">
+                                                {{ project.get_status_display }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted mb-0">No completed projects yet</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

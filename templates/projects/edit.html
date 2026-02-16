@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Edit Project - UIC{% endblock %}
+
+{% block content %}
+<style>
+    .edit-hero {
+        background: linear-gradient(135deg, #6e8efb, #4e5de7);
+        padding: 60px 0;
+        color: white;
+        border-radius: 0 0 30px 30px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .edit-card {
+        margin-top: -80px;
+        border-radius: 20px;
+        overflow: hidden;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #4e5de7;
+    }
+
+    .divider {
+        height: 1px;
+        background: #ddd;
+        margin: 20px 0;
+    }
+
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(10px);}
+        to {opacity: 1; transform: translateY(0);}
+    }
+
+    .btn-update {
+        background: #4e5de7;
+        border: none;
+        transition: 0.3s;
+    }
+    .btn-update:hover {
+        background: #3c4ac9;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(78,93,231,0.4);
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="edit-hero text-center">
+    <div class="container">
+        <h1 class="fw-bold mb-2">
+            <i class="bi bi-pencil-square"></i> Edit Your Project
+        </h1>
+        <p class="lead mb-0">Update your project details with ease</p>
+    </div>
+</section>
+
+<!-- Form Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="card shadow-lg edit-card">
+            <div class="card-body p-5">
+
+                <!-- Header with project name -->
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold mb-1">{{ form.instance.title }}</h3>
+                    <p class="text-muted">Make changes and save instantly</p>
+                </div>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <!-- Project Info Section -->
+                    <div class="section-title"><i class="bi bi-file-earmark-text"></i> Project Information</div>
+                    {{ form.title|as_crispy_field }}
+                    {{ form.description|as_crispy_field }}
+                    {{ form.domain|as_crispy_field }}
+                    {{ form.required_skills|as_crispy_field }}
+
+                    <div class="divider"></div>
+
+                    <!-- Requirements Section -->
+                    <div class="section-title"><i class="bi bi-people"></i> Team & Requirements</div>
+                    {{ form.team_type|as_crispy_field }}
+                    {{ form.team_size|as_crispy_field }}
+                    {{ form.min_gpa|as_crispy_field }}
+                    {{ form.eligible_departments|as_crispy_field }}
+                    {{ form.eligible_years|as_crispy_field }}
+
+                    <div class="divider"></div>
+
+                    <!-- Payment Section -->
+                    <div class="section-title"><i class="bi bi-wallet2"></i> Payment & Duration</div>
+                    {{ form.payment_type|as_crispy_field }}
+                    {{ form.payment_amount|as_crispy_field }}
+                    {{ form.duration_weeks|as_crispy_field }}
+                    {{ form.deadline|as_crispy_field }}
+
+                    <div class="divider"></div>
+
+                    <!-- Submit -->
+                    <button type="submit" class="btn btn-update btn-lg w-100 text-white">
+                        <i class="bi bi-check-circle"></i> Save Changes
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

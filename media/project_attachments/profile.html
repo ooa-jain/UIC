@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile - UIC Platform{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <!-- Profile Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-body text-center">
+                        {% if user.user_type == 'student' %}
+                            {% if profile.profile_picture %}
+                                <img src="{{ profile.profile_picture.url }}" alt="Profile"
+                                     class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                                     style="width: 150px; height: 150px;">
+                                    <h1 class="mb-0">{{ user.first_name|first|upper }}{{ user.last_name|first|upper }}</h1>
+                                </div>
+                            {% endif %}
+                            <h4 class="fw-bold">{{ user.get_full_name }}</h4>
+                            <p class="text-muted">{{ profile.department }}</p>
+                            <span class="badge bg-primary">Student</span>
+
+                        {% elif user.user_type == 'company' %}
+                            {% if profile.logo %}
+                                <img src="{{ profile.logo.url }}" alt="Logo"
+                                     class="img-fluid mb-3" style="max-height: 100px;">
+                            {% else %}
+                                <div class="bg-success text-white rounded d-inline-flex align-items-center justify-content-center mb-3"
+                                     style="width: 150px; height: 150px;">
+                                    <i class="bi bi-building display-1"></i>
+                                </div>
+                            {% endif %}
+                            <h4 class="fw-bold">{{ profile.name }}</h4>
+                            <p class="text-muted">{{ profile.industry }}</p>
+                            <span class="badge bg-success">Company</span>
+                            {% if profile.is_verified %}
+                                <span class="badge bg-info"><i class="bi bi-patch-check"></i> Verified</span>
+                            {% endif %}
+
+                        {% else %}
+                            {% if profile.logo %}
+                                <img src="{{ profile.logo.url }}" alt="Logo"
+                                     class="img-fluid mb-3" style="max-height: 100px;">
+                            {% else %}
+                                <div class="bg-info text-white rounded d-inline-flex align-items-center justify-content-center mb-3"
+                                     style="width: 150px; height: 150px;">
+                                    <i class="bi bi-bank display-1"></i>
+                                </div>
+                            {% endif %}
+                            <h4 class="fw-bold">{{ profile.name }}</h4>
+                            <p class="text-muted">University</p>
+                            <span class="badge bg-info">University Admin</span>
+                            {% if profile.is_verified %}
+                                <span class="badge bg-success"><i class="bi bi-patch-check"></i> Verified</span>
+                            {% endif %}
+                        {% endif %}
+
+                        <hr>
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary w-100">
+                            <i class="bi bi-pencil"></i> Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card mt-4 shadow">
+                    <div class="card-header">
+                        <h6 class="mb-0"><i class="bi bi-bar-chart"></i> Stats</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if user.user_type == 'student' %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Projects Completed</span>
+                                <strong>{{ profile.projects_completed }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Rating</span>
+                                <strong>⭐ {{ profile.rating }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Earned</span>
+                                <strong>₹{{ profile.total_earned }}</strong>
+                            </div>
+                        {% elif user.user_type == 'company' %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Projects Posted</span>
+                                <strong>{{ profile.total_projects_posted }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Rating</span>
+                                <strong>⭐ {{ profile.rating }}</strong>
+                            </div>
+                        {% else %}
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Total Students</span>
+                                <strong>{{ profile.students.count }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Verified Companies</span>
+                                <strong>{{ profile.verified_companies.count }}</strong>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Active Projects</span>
+                                <strong>{{ profile.projects.count }}</strong>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Details -->
+            <div class="col-lg-8">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-person-lines-fill"></i> Profile Details</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if user.user_type == 'student' %}
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Student ID:</strong>
+                                    <p class="text-muted">{{ profile.student_id }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>University:</strong>
+                                    <p class="text-muted">{{ profile.university.name }}</p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Year:</strong>
+                                    <p class="text-muted">{{ profile.get_year_display }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>GPA:</strong>
+                                    <p class="text-muted">{{ profile.gpa|default:"Not specified" }}</p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Bio:</strong>
+                                <p class="text-muted">{{ profile.bio|default:"No bio added yet" }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Skills:</strong>
+                                <div>
+                                    {% for skill in profile.get_skills_list %}
+                                        <span class="badge bg-secondary me-1 mb-1">{{ skill }}</span>
+                                    {% empty %}
+                                        <span class="text-muted">No skills added</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Preferred Domains:</strong>
+                                <div>
+                                    {% for domain in profile.get_preferred_domains_list %}
+                                        <span class="badge bg-primary me-1 mb-1">{{ domain }}</span>
+                                    {% empty %}
+                                        <span class="text-muted">No preferences set</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            {% if profile.portfolio_url %}
+                            <div class="mb-3">
+                                <strong>Portfolio:</strong>
+                                <a href="{{ profile.portfolio_url }}" target="_blank">{{ profile.portfolio_url }}</a>
+                            </div>
+                            {% endif %}
+                            {% if profile.resume %}
+                            <div class="mb-3">
+                                <strong>Resume:</strong>
+                                <a href="{{ profile.resume.url }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-download"></i> Download Resume
+                                </a>
+                            </div>
+                            {% endif %}
+
+                        {% elif user.user_type == 'company' %}
+                            <div class="mb-3">
+                                <strong>Description:</strong>
+                                <p class="text-muted">{{ profile.description|default:"No description" }}</p>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <strong>Website:</strong>
+                                    <p><a href="{{ profile.website }}" target="_blank">{{ profile.website|default:"Not specified" }}</a></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Industry:</strong>
+                                    <p class="text-muted">{{ profile.industry }}</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <h6 class="fw-bold">Contact Information</h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Contact Person:</strong>
+                                    <p class="text-muted">{{ profile.contact_person|default:"Not specified" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Email:</strong>
+                                    <p class="text-muted">{{ profile.contact_email }}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Phone:</strong>
+                                    <p class="text-muted">{{ profile.contact_phone|default:"Not specified" }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Address:</strong>
+                                    <p class="text-muted">{{ profile.address|default:"Not specified" }}</p>
+                                </div>
+                            </div>
+
+                        {% else %}
+                            <div class="mb-3">
+                                <strong>Description:</strong>
+                                <p class="text-muted">{{ profile.description|default:"No description" }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Address:</strong>
+                                <p class="text-muted">{{ profile.address }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <strong>Website:</strong>
+                                <p><a href="{{ profile.website }}" target="_blank">{{ profile.website|default:"Not specified" }}</a></p>
+                            </div>
+                            <hr>
+                            <h6 class="fw-bold">Admin Contact</h6>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <strong>Name:</strong>
+                                    <p class="text-muted">{{ profile.admin_name }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Email:</strong>
+                                    <p class="text-muted">{{ profile.admin_email }}</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <strong>Phone:</strong>
+                                    <p class="text-muted">{{ profile.admin_phone }}</p>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

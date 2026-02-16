@@ -1,0 +1,353 @@
+<!-- ============================================ -->
+<!-- FILE: templates/dashboard/university.html -->
+<!-- ACTION: UPDATE the header section and Quick Actions -->
+<!-- ============================================ -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}University Dashboard - UIC Platform{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class="fw-bold">Welcome, {{ profile.name }}!</h2>
+                <p class="text-muted">University Administration Dashboard</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <!-- Post Project Button -->
+                <a href="{% url 'projects:create' %}" class="btn btn-success me-2">
+                    <i class="bi bi-plus-circle"></i> Post Project
+                </a>
+                <!-- Review Projects Button -->
+                <a href="{% url 'projects:pending_review' %}" class="btn btn-warning">
+                    <i class="bi bi-clock-history"></i> Review ({{ pending_projects }})
+                </a>
+            </div>
+        </div>
+
+      <!-- Stats Cards -->
+<div class="row mb-4">
+
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-hourglass-split display-4 text-warning mb-2"></i>
+                <h3 class="dashboard-stat">{{ pending_projects }}</h3>
+                <p class="text-muted mb-0">Pending Review</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-briefcase-fill display-4 text-primary mb-2"></i>
+                <h3 class="dashboard-stat">{{ active_projects }}</h3>
+                <p class="text-muted mb-0">Active Projects</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <a href="{% url 'accounts:university_students' %}?status=pending" class="text-decoration-none">
+            <div class="card dashboard-card h-100 hover-shadow">
+                <div class="card-body text-center">
+                    <i class="bi bi-person-check display-4 text-info mb-2"></i>
+                    <h3 class="dashboard-stat text-info">
+                        {{ user.university_profile.students.filter.count|default:0 }}
+                    </h3>
+                    <p class="text-muted mb-0">Pending Students</p>
+                </div>
+            </div>
+        </a>
+    </div>
+
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-people-fill display-4 text-success mb-2"></i>
+                <h3 class="dashboard-stat">{{ total_students }}</h3>
+                <p class="text-muted mb-0">Total Students</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ VERIFIED COMPANIES — NOW INSIDE ROW -->
+    <div class="col-md-3 mb-3">
+        <div class="card dashboard-card h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-building display-4 text-info mb-2"></i>
+                <h3 class="dashboard-stat">{{ verified_companies }}</h3>
+                <p class="text-muted mb-0">Verified Companies</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8 mb-4">
+                <!-- Pending Reviews -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-warning">
+                        <h5 class="mb-0"><i class="bi bi-clock-history"></i> Projects Awaiting Review</h5>
+                        <a href="{% url 'projects:pending_review' %}" class="btn btn-sm btn-dark">View All</a>
+                    </div>
+                    <div class="card-body">
+                        {% if profile.projects.all %}
+                            {% for project in profile.projects.all|slice:":5" %}
+                            {% if project.status == 'pending_review' %}
+                            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                                <div>
+                                    <h6 class="fw-bold mb-1">{{ project.title }}</h6>
+                                    <p class="text-muted small mb-1">
+                                        {% if project.company %}
+                                            {{ project.company.name }}
+                                        {% else %}
+                                            <span class="badge bg-info">University Posted</span>
+                                        {% endif %}
+                                    </p>
+                                    <span class="badge bg-primary">{{ project.get_domain_display }}</span>
+                                    <span class="badge bg-success">₹{{ project.payment_amount }}</span>
+                                </div>
+                                <div class="text-end">
+                                    <form method="post" action="{% url 'projects:review' project.pk %}" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" name="action" value="approve" class="btn btn-sm btn-success">
+                                            <i class="bi bi-check"></i> Approve
+                                        </button>
+                                        <button type="submit" name="action" value="reject" class="btn btn-sm btn-danger">
+                                            <i class="bi bi-x"></i> Reject
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            {% endif %}
+                            {% endfor %}
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-check-circle display-3 text-success mb-3"></i>
+                            <p class="text-muted">All caught up! No projects pending review.</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Active Projects -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-folder-fill"></i> Active Projects</h5>
+                        <a href="{% url 'projects:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        {% for project in profile.projects.all|slice:":5" %}
+                        {% if project.status == 'open' or project.status == 'in_progress' %}
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <div>
+                                <strong>{{ project.title }}</strong>
+                                <br>
+                                <small class="text-muted">
+                                    {% if project.company %}
+                                        {{ project.company.name }}
+                                    {% else %}
+                                        <span class="badge bg-info badge-sm">University Project</span>
+                                    {% endif %}
+                                </small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-{% if project.status == 'open' %}success{% else %}primary{% endif %}">
+                                    {{ project.get_status_display }}
+                                </span>
+                                <br>
+                                <small class="text-muted">{{ project.applications.count }} applications</small>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% empty %}
+                        <p class="text-muted text-center">No active projects</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4 mb-4">
+                <!-- University Profile Card -->
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        {% if profile.logo %}
+                        <img src="{{ profile.logo.url }}" alt="Logo" class="img-fluid mb-3" style="max-height: 80px;">
+                        {% else %}
+                        <div class="bg-light rounded d-inline-block p-4 mb-3">
+                            <i class="bi bi-bank display-3 text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <h5 class="fw-bold">{{ profile.name }}</h5>
+                        {% if profile.is_verified %}
+                        <span class="badge bg-success"><i class="bi bi-patch-check"></i> Verified</span>
+                        {% endif %}
+                        <hr>
+                        <div class="text-start">
+                            <p class="mb-1"><strong>Admin:</strong> {{ profile.admin_name|default:"Not set" }}</p>
+                            <p class="mb-1"><strong>Email:</strong> {{ profile.admin_email|default:"Not set" }}</p>
+                            <p class="mb-0"><strong>Phone:</strong> {{ profile.admin_phone|default:"Not set" }}</p>
+                        </div>
+                        <hr>
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-sm btn-outline-primary w-100">
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+
+               <!-- Quick Actions Section - UPDATED -->
+<div class="card">
+    <div class="card-header">
+        <h6 class="mb-0">Quick Actions</h6>
+    </div>
+    <div class="list-group list-group-flush">
+        <a href="{% url 'projects:create' %}" class="list-group-item list-group-item-action">
+            <i class="bi bi-plus-circle text-success"></i> Post New Project
+        </a>
+
+        <!-- Quick Actions - ADD THIS -->
+<a href="{% url 'accounts:university_companies' %}" class="list-group-item list-group-item-action">
+    <i class="bi bi-building text-success"></i> Manage Companies
+    {% if user.university_profile.verified_companies.filter.count > 0 %}
+    <span class="badge bg-warning float-end">
+        {{ user.university_profile.verified_companies.filter.count }}
+    </span>
+    {% endif %}
+</a>
+
+        <!-- NEW: Manage Students with Pending Badge -->
+        <a href="{% url 'accounts:university_students' %}" class="list-group-item list-group-item-action">
+            <i class="bi bi-people-fill text-primary"></i> Manage Students
+            {% if user.university_profile.students.filter.count > 0 %}
+            <span class="badge bg-warning float-end">
+                {{ user.university_profile.students.filter.count }}
+            </span>
+            {% endif %}
+        </a>
+
+        <!-- My Posted Projects -->
+        <a href="{% url 'accounts:university_projects' %}" class="list-group-item list-group-item-action">
+            <i class="bi bi-folder-fill text-success"></i> My Posted Projects
+            {% if user.university_profile.projects.filter.count > 0 %}
+            <span class="badge bg-success float-end">
+                {{ user.university_profile.projects.filter.count }}
+            </span>
+            {% endif %}
+        </a>
+
+        <!-- Manage Applications Link -->
+        <a href="{% url 'projects:university_applications' %}" class="list-group-item list-group-item-action">
+            <i class="bi bi-inbox text-primary"></i> Manage Applications
+        </a>
+
+        <a href="{% url 'projects:pending_review' %}" class="list-group-item list-group-item-action">
+            <i class="bi bi-clock-history"></i> Review Company Projects
+            {% if pending_projects > 0 %}
+            <span class="badge bg-warning float-end">{{ pending_projects }}</span>
+            {% endif %}
+        </a>
+
+        <a href="{% url 'projects:list' %}" class="list-group-item list-group-item-action">
+            <i class="bi bi-folder"></i> All Projects
+        </a>
+
+        <a href="{% url 'accounts:profile_edit' %}" class="list-group-item list-group-item-action">
+            <i class="bi bi-pencil"></i> Edit Profile
+        </a>
+    </div>
+</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Active Projects -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-folder-fill"></i> Active Projects</h5>
+        <a href="{% url 'projects:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+    </div>
+    <div class="card-body">
+        {% for project in profile.projects.all|slice:":5" %}
+        {% if project.status == 'open' or project.status == 'in_progress' %}
+        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+            <div>
+                <strong>{{ project.title }}</strong>
+                <br>
+                <small class="text-muted">
+                    {% if project.company %}
+                        {{ project.company.name }}
+                    {% else %}
+                        <span class="badge bg-info badge-sm">University Project</span>
+                    {% endif %}
+                </small>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-{% if project.status == 'open' %}success{% else %}primary{% endif %}">
+                    {{ project.get_status_display }}
+                </span>
+                <br>
+                <small class="text-muted">{{ project.applications.count }} applications</small>
+            </div>
+        </div>
+        {% endif %}
+        {% empty %}
+        <p class="text-muted mb-0 text-center">No active projects</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- NEW: Pending Students Section -->
+<div class="card mt-4">
+    <div class="card-header d-flex justify-content-between align-items-center bg-warning">
+        <h5 class="mb-0">
+            <i class="bi bi-person-check"></i> Students Awaiting Verification
+        </h5>
+        <a href="{% url 'accounts:university_students' %}?status=pending" class="btn btn-sm btn-dark">
+            View All
+        </a>
+    </div>
+    <div class="card-body">
+        {% with pending_students=profile.students.filter %}
+        {% if pending_students %}
+            {% for student in pending_students|slice:":5" %}
+            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                <div>
+                    <h6 class="fw-bold mb-1">{{ student.user.get_full_name }}</h6>
+                    <p class="text-muted small mb-1">
+                        <strong>USN:</strong> {{ student.student_id|default:"Not provided" }} |
+                        <strong>Dept:</strong> {{ student.department }}
+                    </p>
+                    <p class="text-muted small mb-0">
+                        <strong>Email:</strong> {{ student.university_email|default:"Not provided" }}
+                    </p>
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> Applied: {{ student.created_at|date:"M d, Y" }}
+                    </small>
+                </div>
+                <div class="text-end">
+                    <a href="{% url 'accounts:university_students' %}?status=pending"
+                       class="btn btn-sm btn-warning">
+                        <i class="bi bi-eye"></i> Review
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+        <div class="text-center py-4">
+            <i class="bi bi-check-circle display-3 text-success mb-3"></i>
+            <p class="text-muted">All caught up! No students pending verification.</p>
+        </div>
+        {% endif %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock %}

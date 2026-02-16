@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Projects - {{ user.company_profile.name }}{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+
+
+        <!-- DEBUG INFO - REMOVE AFTER TESTING -->
+        <div class="alert alert-info">
+            <strong>Debug Info:</strong><br>
+            Current User: {{ user.username }} ({{ user.user_type }})<br>
+            Company: {{ user.company_profile.name }}<br>
+            Filter: {{ current_filter }}<br>
+            Total Projects in DB for this company: {{ total_count }}<br>
+            Projects shown on this page: {{ projects.count }}
+        </div>
+
+
+        <!-- Header -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="fw-bold mb-2">
+                            <i class="bi bi-folder-fill"></i> My Projects
+                        </h3>
+                        <p class="text-muted mb-0">Manage all your posted projects</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{% url 'projects:create' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle"></i> Post New Project
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <a href="?status=all" class="text-decoration-none">
+                    <div class="card text-center h-100 {% if current_filter == 'all' %}border-primary{% endif %}">
+                        <div class="card-body">
+                            <h4 class="text-primary mb-0">{{ total_count }}</h4>
+                            <small class="text-muted">Total</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="?status=pending_review" class="text-decoration-none">
+                    <div class="card text-center h-100 {% if current_filter == 'pending_review' %}border-warning{% endif %}">
+                        <div class="card-body">
+                            <h4 class="text-warning mb-0">{{ pending_count }}</h4>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="?status=open" class="text-decoration-none">
+                    <div class="card text-center h-100 {% if current_filter == 'open' %}border-success{% endif %}">
+                        <div class="card-body">
+                            <h4 class="text-success mb-0">{{ open_count }}</h4>
+                            <small class="text-muted">Open</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="?status=in_progress" class="text-decoration-none">
+                    <div class="card text-center h-100 {% if current_filter == 'in_progress' %}border-info{% endif %}">
+                        <div class="card-body">
+                            <h4 class="text-info mb-0">{{ in_progress_count }}</h4>
+                            <small class="text-muted">In Progress</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2">
+                <a href="?status=completed" class="text-decoration-none">
+                    <div class="card text-center h-100 {% if current_filter == 'completed' %}border-success{% endif %}">
+                        <div class="card-body">
+                            <h4 class="text-success mb-0">{{ completed_count }}</h4>
+                            <small class="text-muted">Completed</small>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-2">
+    <a href="?status=rejected" class="text-decoration-none">
+        <div class="card text-center h-100 {% if current_filter == 'rejected' %}border-danger{% endif %}">
+            <div class="card-body">
+                <h4 class="text-danger mb-0">{{ rejected_count }}</h4>
+                <small class="text-muted">Rejected</small>
+            </div>
+        </div>
+    </a>
+</div>
+        </div>
+
+        <!-- Projects List -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+    <h5 class="mb-0">
+        <i class="bi bi-briefcase"></i>
+        {% if current_filter == 'all' %}All My Projects
+        {% elif current_filter == 'pending_review' %}Pending University Review
+        {% elif current_filter == 'open' %}Open for Applications
+        {% elif current_filter == 'in_progress' %}Projects In Progress
+        {% elif current_filter == 'completed' %}Completed Projects
+        {% elif current_filter == 'rejected' %}Rejected Projects
+        {% endif %}
+    </h5>
+</div>
+            <div class="card-body">
+                {% if projects %}
+                    {% for project in projects %}
+                    <div class="card mb-3 border-start border-4 border-{% if project.status == 'pending_review' %}warning{% elif project.status == 'open' %}success{% elif project.status == 'in_progress' %}info{% elif project.status == 'completed' %}success{% else %}secondary{% endif %}">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <h5 class="fw-bold mb-2">
+                                        {{ project.title }}
+                                        <span class="badge bg-{% if project.status == 'pending_review' %}warning{% elif project.status == 'open' %}success{% elif project.status == 'in_progress' %}info{% elif project.status == 'completed' %}success{% else %}secondary{% endif %}">
+                                            {{ project.get_status_display }}
+                                        </span>
+                                    </h5>
+                                    <p class="text-muted mb-2">{{ project.description|truncatewords:30 }}</p>
+                                    <div class="mb-2">
+                                        <span class="badge bg-primary">{{ project.get_domain_display }}</span>
+                                        <span class="badge bg-success">₹{{ project.payment_amount }}</span>
+                                        <span class="badge bg-info">{{ project.applications.count }} applications</span>
+                                        {% if project.assigned_students.exists %}
+                                            <span class="badge bg-warning text-dark">{{ project.assigned_students.count }} assigned</span>
+                                        {% endif %}
+                                    </div>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar"></i> Posted: {{ project.created_at|date:"M d, Y" }} | 
+                                        <i class="bi bi-calendar-check"></i> Deadline: {{ project.deadline|date:"M d, Y" }}
+                                    </small>
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <a href="{% url 'projects:detail' project.pk %}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                        <i class="bi bi-eye"></i> View Details
+                                    </a>
+                                    <a href="{% url 'projects:manage_applications' project.pk %}" class="btn btn-outline-info btn-sm w-100 mb-2">
+                                        <i class="bi bi-people"></i> Applications ({{ project.applications.count }})
+                                    </a>
+                                    {% if project.status == 'draft' or project.status == 'rejected' %}
+                                        <a href="{% url 'projects:edit' project.pk %}" class="btn btn-outline-warning btn-sm w-100 mb-2">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                    {% endif %}
+                                    {% if project.status == 'in_progress' %}
+                                        <a href="{% url 'projects:workspace' project.pk %}" class="btn btn-outline-success btn-sm w-100">
+                                            <i class="bi bi-kanban"></i> Workspace
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- Pagination -->
+                    {% if is_paginated %}
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&status={{ current_filter }}">First</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}&status={{ current_filter }}">Previous</a>
+                            </li>
+                            {% endif %}
+
+                            <li class="page-item active">
+                                <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+                            </li>
+
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.next_page_number }}&status={{ current_filter }}">Next</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}&status={{ current_filter }}">Last</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    {% endif %}
+
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <h5 class="mt-3">No projects found</h5>
+                        <p class="text-muted">
+                            {% if current_filter == 'pending_review' %}
+                                No projects pending review
+                            {% elif current_filter == 'open' %}
+                                No open projects
+                            {% elif current_filter == 'in_progress' %}
+                                No projects in progress
+                            {% elif current_filter == 'completed' %}
+                                No completed projects yet
+                            {% else %}
+                                Start by posting your first project!
+                            {% endif %}
+                        </p>
+                        {% if current_filter == 'all' %}
+                        <a href="{% url 'projects:create' %}" class="btn btn-primary mt-3">
+                            <i class="bi bi-plus-circle"></i> Post Your First Project
+                        </a>
+                        {% else %}
+                        <a href="?status=all" class="btn btn-outline-primary mt-3">
+                            View All Projects
+                        </a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

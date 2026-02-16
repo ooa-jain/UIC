@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Applications - {{ project.title }}{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <!-- Project Info -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 class="fw-bold mb-2">{{ project.title }}</h3>
+                        <p class="text-muted mb-0">
+                            <span class="badge bg-primary">{{ project.get_domain_display }}</span>
+                            <span class="badge bg-success">₹{{ project.payment_amount }}</span>
+                            <span class="badge bg-info">{{ project.get_status_display }}</span>
+                        </p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <a href="{% url 'projects:detail' project.pk %}" class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i> View Project
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-primary">{{ applications.count }}</h3>
+                        <p class="text-muted mb-0">Total Applications</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning">{{ pending_count }}</h3>
+                        <p class="text-muted mb-0">Pending</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">{{ accepted_count }}</h3>
+                        <p class="text-muted mb-0">Accepted</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-danger">{{ rejected_count }}</h3>
+                        <p class="text-muted mb-0">Rejected</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Applications List -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0"><i class="bi bi-people"></i> Applications</h5>
+            </div>
+            <div class="card-body">
+                {% if applications %}
+                    {% for application in applications %}
+                    <div class="card mb-3 {% if application.status == 'accepted' %}border-success{% elif application.status == 'rejected' %}border-danger{% endif %}">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                             style="width: 60px; height: 60px; min-width: 60px;">
+                                            <h4 class="mb-0">{{ application.student.user.first_name|first|upper }}{{ application.student.user.last_name|first|upper }}</h4>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fw-bold mb-1">
+                                                <a href="{% url 'accounts:student_public' application.student.pk %}" class="text-decoration-none">
+                                                    {{ application.student.user.get_full_name }}
+                                                    <i class="bi bi-box-arrow-up-right small"></i>
+                                                </a>
+                                                {% if application.status == 'accepted' %}
+                                                    <span class="badge bg-success">✓ Accepted</span>
+                                                {% elif application.status == 'rejected' %}
+                                                    <span class="badge bg-danger">✗ Rejected</span>
+                                                {% elif application.status == 'pending' %}
+                                                    <span class="badge bg-warning">⏳ Pending</span>
+                                                {% endif %}
+                                            </h5>
+                                            <p class="text-muted small mb-2">
+                                                <i class="bi bi-mortarboard"></i> {{ application.student.department }} |
+                                                Year {{ application.student.year }} |
+                                                GPA: <strong>{{ application.student.gpa|default:"N/A" }}</strong>
+                                                {% if application.student.gpa %}
+                                                    {% if application.student.gpa >= 8 %}
+                                                        <span class="badge bg-success">Excellent</span>
+                                                    {% elif application.student.gpa >= 6 %}
+                                                        <span class="badge bg-warning">Good</span>
+                                                    {% endif %}
+                                                {% endif %}
+                                            </p>
+                                            <p class="mb-2">
+                                                <strong>Applied:</strong> {{ application.created_at|date:"M d, Y" }} |
+                                                <strong>Rating:</strong> ⭐ {{ application.student.rating }} |
+                                                <strong>Completed:</strong> {{ application.student.projects_completed }} projects
+                                            </p>
+
+                                            <!-- Skills Preview -->
+                                            {% if application.student.get_skills_list %}
+                                            <div class="mb-2">
+                                                <strong class="small">Skills:</strong>
+                                                {% for skill in application.student.get_skills_list|slice:":5" %}
+                                                    <span class="badge bg-secondary">{{ skill }}</span>
+                                                {% endfor %}
+                                                {% if application.student.get_skills_list|length > 5 %}
+                                                    <span class="badge bg-light text-dark">+{{ application.student.get_skills_list|length|add:"-5" }} more</span>
+                                                {% endif %}
+                                            </div>
+                                            {% endif %}
+
+                                            <!-- Cover Letter -->
+                                            <div class="mt-3">
+                                                <strong>Cover Letter:</strong>
+                                                <p class="text-muted">{{ application.cover_letter|truncatewords:50 }}</p>
+
+                                                {% if application.proposed_approach %}
+                                                <button class="btn btn-sm btn-outline-info" type="button"
+                                                        data-bs-toggle="collapse"
+                                                        data-bs-target="#approach-{{ application.id }}">
+                                                    View Proposed Approach
+                                                </button>
+                                                <div class="collapse mt-2" id="approach-{{ application.id }}">
+                                                    <div class="card card-body bg-light">
+                                                        {{ application.proposed_approach }}
+                                                    </div>
+                                                </div>
+                                                {% endif %}
+
+                                                {% if application.portfolio_links %}
+                                                <div class="mt-2">
+                                                    <strong>Portfolio:</strong>
+                                                    <p class="text-muted">{{ application.portfolio_links }}</p>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 text-end">
+                                    <a href="{% url 'accounts:student_public' application.student.pk %}" class="btn btn-outline-primary btn-sm w-100 mb-2">
+                                        <i class="bi bi-person"></i> View Full Profile
+                                    </a>
+
+                                    {% if application.status == 'pending' %}
+                                    <form method="post" action="{% url 'projects:application_action' project.pk application.id %}" class="d-inline w-100">
+                                        {% csrf_token %}
+                                        <button type="submit" name="action" value="accept"
+                                                class="btn btn-success w-100 mb-2"
+                                                onclick="return confirm('Accept this application?')">
+                                            <i class="bi bi-check-circle"></i> Accept
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{% url 'projects:application_action' project.pk application.id %}" class="d-inline w-100">
+                                        {% csrf_token %}
+                                        <button type="submit" name="action" value="reject"
+                                                class="btn btn-danger w-100"
+                                                onclick="return confirm('Reject this application?')">
+                                            <i class="bi bi-x-circle"></i> Reject
+                                        </button>
+                                    </form>
+                                    {% elif application.status == 'accepted' %}
+                                        <div class="alert alert-success mb-0">
+                                            <i class="bi bi-check-circle-fill"></i> Accepted
+                                            {% if application.reviewed_at %}
+                                            <br><small>{{ application.reviewed_at|date:"M d, Y" }}</small>
+                                            {% endif %}
+                                        </div>
+                                    {% elif application.status == 'rejected' %}
+                                        <div class="alert alert-danger mb-0">
+                                            <i class="bi bi-x-circle-fill"></i> Rejected
+                                            {% if application.reviewed_at %}
+                                            <br><small>{{ application.reviewed_at|date:"M d, Y" }}</small>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <h5 class="mt-3">No applications yet</h5>
+                        <p class="text-muted">Applications will appear here when students apply</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

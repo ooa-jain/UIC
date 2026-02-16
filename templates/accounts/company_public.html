@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ company.name }} - Company Profile{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <!-- Left Column - Company Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow">
+                    <div class="card-body text-center">
+                        {% if company.logo %}
+                            <img src="{{ company.logo.url }}" alt="{{ company.name }}" 
+                                 class="img-fluid mb-3" style="max-height: 120px;">
+                        {% else %}
+                            <div class="bg-success text-white rounded d-inline-flex align-items-center justify-content-center mb-3" 
+                                 style="width: 120px; height: 120px;">
+                                <i class="bi bi-building display-3"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <h4 class="fw-bold">{{ company.name }}</h4>
+                        <p class="text-muted">{{ company.industry }}</p>
+                        
+                        {% if company.is_verified %}
+                            <span class="badge bg-success mb-3">
+                                <i class="bi bi-patch-check-fill"></i> Verified Company
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning mb-3">
+                                <i class="bi bi-clock"></i> Verification Pending
+                            </span>
+                        {% endif %}
+                        
+                        <hr>
+                        
+                        <div class="d-flex justify-content-around mb-3">
+                            <div class="text-center">
+                                <h5 class="mb-0">⭐ {{ company.rating }}</h5>
+                                <small class="text-muted">Rating</small>
+                            </div>
+                            <div class="text-center">
+                                <h5 class="mb-0">{{ company.total_projects_posted }}</h5>
+                                <small class="text-muted">Projects</small>
+                            </div>
+                        </div>
+                        
+                        {% if company.website %}
+                        <a href="{{ company.website }}" target="_blank" class="btn btn-outline-primary w-100 mb-2">
+                            <i class="bi bi-globe"></i> Visit Website
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Contact Information -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0"><i class="bi bi-telephone"></i> Contact Information</h6>
+                    </div>
+                    <div class="card-body">
+                        {% if company.contact_person %}
+                        <div class="mb-3">
+                            <strong>Contact Person:</strong>
+                            <p class="text-muted mb-0">{{ company.contact_person }}</p>
+                        </div>
+                        {% endif %}
+                        <div class="mb-3">
+                            <strong>Email:</strong>
+                            <p class="text-muted mb-0">
+                                <a href="mailto:{{ company.contact_email }}">{{ company.contact_email }}</a>
+                            </p>
+                        </div>
+                        {% if company.contact_phone %}
+                        <div class="mb-3">
+                            <strong>Phone:</strong>
+                            <p class="text-muted mb-0">{{ company.contact_phone }}</p>
+                        </div>
+                        {% endif %}
+                        {% if company.address %}
+                        <div class="mb-0">
+                            <strong>Address:</strong>
+                            <p class="text-muted mb-0">{{ company.address }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Verification Info -->
+                {% if company.is_verified and company.verified_by %}
+                <div class="card shadow mt-4">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check text-success display-4"></i>
+                        <p class="mb-0 mt-2">
+                            <small class="text-muted">Verified by</small><br>
+                            <strong>{{ company.verified_by.name }}</strong>
+                        </p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            
+            <!-- Right Column - Details -->
+            <div class="col-lg-8">
+                <!-- About Company -->
+                <div class="card shadow mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-building"></i> About {{ company.name }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>{{ company.description|default:"No description available" }}</p>
+                        
+                        <div class="row mt-4">
+                            <div class="col-md-6">
+                                <strong>Industry:</strong>
+                                <p class="text-muted">{{ company.industry }}</p>
+                            </div>
+                            {% if company.website %}
+                            <div class="col-md-6">
+                                <strong>Website:</strong>
+                                <p><a href="{{ company.website }}" target="_blank">{{ company.website }}</a></p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Active Projects -->
+                <div class="card shadow mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-briefcase"></i> Active Projects</h5>
+                        <span class="badge bg-primary">{{ company.projects.filter.count }} Open</span>
+                    </div>
+                    <div class="card-body">
+                        {% if company.projects.filter %}
+                        <div class="row">
+                            {% for project in company.projects.filter|slice:":6" %}
+                            <div class="col-md-6 mb-3">
+                                <div class="card h-100 border-primary">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold">{{ project.title }}</h6>
+                                        <p class="text-muted small mb-2">{{ project.description|truncatewords:15 }}</p>
+                                        <div class="mb-2">
+                                            <span class="badge bg-primary">{{ project.get_domain_display }}</span>
+                                            <span class="badge bg-success">₹{{ project.payment_amount }}</span>
+                                        </div>
+                                        <a href="{% url 'projects:detail' project.pk %}" class="btn btn-sm btn-outline-primary">
+                                            View Details <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-muted mb-0 text-center">No active projects at the moment</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Completed Projects Stats -->
+                <div class="card shadow">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Company Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h3 class="text-primary">{{ company.projects.count }}</h3>
+                                    <p class="text-muted mb-0">Total Projects</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h3 class="text-success">{{ company.projects.filter.count }}</h3>
+                                    <p class="text-muted mb-0">Completed</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="border rounded p-3">
+                                    <h3 class="text-warning">⭐ {{ company.rating }}</h3>
+                                    <p class="text-muted mb-0">Average Rating</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,253 @@
+<!-- templates/projects/detail.html - UPDATED -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ project.title }} - UIC Platform{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'projects:list' %}">Projects</a></li>
+                <li class="breadcrumb-item active">{{ project.title }}</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h2 class="fw-bold">{{ project.title }}</h2>
+                                <p class="text-muted mb-0">
+                                    {% if project.company %}
+                                        <i class="bi bi-building"></i>
+                                        <a href="{% url 'accounts:company_public' project.company.pk %}" class="text-decoration-none">
+                                            {{ project.company.name }}
+                                        </a>
+                                        {% if project.company.is_verified %}
+                                            <span class="badge bg-success ms-1">
+                                                <i class="bi bi-patch-check"></i> Verified
+                                            </span>
+                                        {% endif %}
+                                    {% else %}
+                                        <i class="bi bi-bank"></i> {{ project.university.name }}
+                                        <span class="badge bg-info ms-1">University Project</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <span class="status-badge status-{{ project.status }}">
+                                {{ project.get_status_display }}
+                            </span>
+                        </div>
+
+                        <!-- UPDATED: Badge section with new labels and job type -->
+                        <div class="mb-4">
+                            <span class="badge bg-primary me-2">{{ project.get_domain_display }}</span>
+                            <span class="badge bg-success me-2">
+                                <i class="bi bi-currency-rupee"></i> {{ project.payment_amount }} Remuneration
+                            </span>
+                            <span class="badge bg-info me-2">{{ project.get_team_type_display }}</span>
+                            <!-- NEW: Job Type Badge -->
+                            <span class="badge bg-warning text-dark me-2">
+                                {% if project.job_type == 'remote' %}
+                                    <i class="bi bi-house"></i> Remote
+                                {% elif project.job_type == 'hybrid' %}
+                                    <i class="bi bi-briefcase"></i> Hybrid
+                                {% else %}
+                                    <i class="bi bi-building"></i> On-site
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <h5 class="fw-bold">Description</h5>
+                        <p class="mb-4">{{ project.description }}</p>
+
+                        <h5 class="fw-bold">Required Skills</h5>
+                        <div class="mb-4">
+                            {% for skill in project.get_required_skills_list %}
+                            <span class="badge bg-secondary me-1 mb-1">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5 class="fw-bold">Project Details</h5>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2">
+                                        <i class="bi bi-people text-primary"></i>
+                                        <strong>Team:</strong> {{ project.get_team_type_display }}
+                                        {% if project.team_type == 'team' %}({{ project.team_size }} members){% endif %}
+                                    </li>
+                                    <!-- NEW: Job Type Display -->
+                                    <li class="mb-2">
+                                        <i class="bi bi-{% if project.job_type == 'remote' %}house{% elif project.job_type == 'hybrid' %}briefcase{% else %}building{% endif %} text-primary"></i>
+                                        <strong>Work Type:</strong> {{ project.get_job_type_display }}
+                                    </li>
+                                    <li class="mb-2">
+                                        <i class="bi bi-clock text-primary"></i>
+                                        <strong>Duration:</strong> {{ project.duration_weeks }} weeks
+                                    </li>
+                                    <!-- UPDATED: Changed "Deadline" to "Project Closure Date" -->
+                                    <li class="mb-2">
+                                        <i class="bi bi-calendar-check text-primary"></i>
+                                        <strong>Project Closure Date:</strong> {{ project.deadline|date:"M d, Y" }}
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="fw-bold">Remuneration & Eligibility</h5>
+                                <ul class="list-unstyled">
+                                    <!-- UPDATED: Changed "Payment" to "Remuneration" -->
+                                    <li class="mb-2">
+                                        <i class="bi bi-currency-rupee text-success"></i>
+                                        <strong>Remuneration:</strong> ₹{{ project.payment_amount }}
+                                        <span class="badge bg-light text-dark">{{ project.get_payment_type_display }}</span>
+                                    </li>
+                                    {% if project.min_gpa %}
+                                    <li class="mb-2">
+                                        <i class="bi bi-graph-up text-primary"></i>
+                                        <strong>Min GPA:</strong> {{ project.min_gpa }}
+                                    </li>
+                                    {% endif %}
+                                    <li class="mb-2">
+                                        <i class="bi bi-bank text-primary"></i>
+                                        <strong>University:</strong> {{ project.university.name }}
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- NEW: Job Description Download Section -->
+                        {% if project.attachment %}
+                        <div class="alert alert-info border-0">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-file-earmark-pdf-fill fs-1 me-3 text-primary"></i>
+                                <div class="flex-grow-1">
+                                    <h6 class="mb-1 fw-bold">Job Description (JD) Available</h6>
+                                    <p class="mb-2 small">Download the detailed job description document for complete project requirements and expectations.</p>
+                                    <a href="{{ project.attachment.url }}" target="_blank" class="btn btn-sm btn-primary">
+                                        <i class="bi bi-download"></i> Download Job Description
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="mt-4">
+                            {% if user.user_type == 'student' and project.status == 'open' %}
+                                {% if has_applied %}
+                                <button class="btn btn-secondary btn-lg" disabled>
+                                    <i class="bi bi-check-circle"></i> Already Applied
+                                </button>
+                                {% else %}
+                                <a href="{% url 'projects:apply' project.pk %}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-send"></i> Apply Now
+                                </a>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Poster Card (Company or University) -->
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        {% if project.company %}
+                            <!-- Company Info -->
+                            {% if project.company.logo %}
+                                <img src="{{ project.company.logo.url }}" class="img-fluid mb-3"
+                                     style="height:80px; object-fit:contain;">
+                            {% else %}
+                                <i class="bi bi-building display-4 text-secondary"></i>
+                            {% endif %}
+
+                            <h5 class="fw-bold mt-2">{{ project.company.name }}</h5>
+                            <p class="text-muted small">{{ project.company.industry }}</p>
+
+                            {% if project.company.is_verified %}
+                                <span class="badge bg-success mb-2">
+                                    <i class="bi bi-patch-check"></i> Verified
+                                </span>
+                            {% else %}
+                                <span class="badge bg-warning mb-2">Pending Verification</span>
+                            {% endif %}
+
+                            {% if project.company.website %}
+                                <a href="{{ project.company.website }}" target="_blank"
+                                   class="btn btn-outline-primary btn-sm mb-2 w-100">
+                                    <i class="bi bi-globe"></i> Visit Website
+                                </a>
+                            {% endif %}
+
+                            <hr>
+
+                            <p class="mb-1"><strong>Rating:</strong> ⭐ {{ project.company.rating }}</p>
+                            <p class="mb-2"><strong>Projects Posted:</strong> {{ project.company.total_projects_posted }}</p>
+
+                            <a href="{% url 'accounts:company_public' project.company.pk %}" class="btn btn-sm btn-primary w-100">
+                                <i class="bi bi-eye"></i> View Full Profile
+                            </a>
+
+                        {% else %}
+                            <!-- University Info -->
+                            {% if project.university.logo %}
+                                <img src="{{ project.university.logo.url }}" class="img-fluid mb-3"
+                                     style="height:60px; object-fit:contain;">
+                            {% else %}
+                                <i class="bi bi-bank display-4 text-info"></i>
+                            {% endif %}
+
+                            <h5 class="fw-bold mt-2">{{ project.university.name }}</h5>
+                            <p class="text-muted small">University Project</p>
+                            <span class="badge bg-info mb-2">Direct University Posting</span>
+
+                            <hr>
+
+                            <p class="text-muted small">{{ project.university.description|truncatewords:20 }}</p>
+                            {% if project.university.website %}
+                            <a href="{{ project.university.website }}" target="_blank" class="btn btn-outline-info btn-sm w-100">
+                                <i class="bi bi-globe"></i> Visit Website
+                            </a>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="fw-bold">Quick Stats</h5>
+                        <ul class="list-unstyled mt-3 mb-0">
+                            <li class="mb-2"><strong>Applications:</strong> {{ project.applications.count }}</li>
+                            <li class="mb-2"><strong>Team Type:</strong> {{ project.get_team_type_display }}</li>
+                            <li class="mb-2"><strong>Domain:</strong> {{ project.get_domain_display }}</li>
+                            <li class="mb-2"><strong>Work Type:</strong> {{ project.get_job_type_display }}</li>
+                            <li class="mb-2"><strong>Posted:</strong> {{ project.created_at|date:"M d, Y" }}</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- University Card -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="fw-bold">{{ project.university.name }}</h5>
+
+                        {% if project.university.logo %}
+                            <img src="{{ project.university.logo.url }}" class="img-fluid my-3"
+                                 style="height:60px; object-fit:contain;">
+                        {% endif %}
+
+                        <p class="text-muted small">{{ project.university.address }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

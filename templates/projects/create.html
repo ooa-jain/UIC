@@ -1,0 +1,369 @@
+<!-- templates/projects/create.html - CLEAN VERSION NO ERRORS -->
+{% extends 'base.html' %}
+
+{% block title %}Post a New Project{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Checkbox styling for Django's rendered structure */
+    .custom-checkbox-container ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 8px;
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #dee2e6;
+        padding: 15px;
+        border-radius: 0.375rem;
+        background: #f8f9fa;
+    }
+
+    .custom-checkbox-container li {
+        background: white;
+        padding: 8px 12px;
+        border-radius: 0.25rem;
+        transition: all 0.2s;
+    }
+
+    .custom-checkbox-container li:hover {
+        background: #e7f3ff;
+    }
+
+    .custom-checkbox-container label {
+        cursor: pointer;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+    }
+
+    .custom-checkbox-container input[type="checkbox"] {
+        margin-right: 8px;
+        cursor: pointer;
+    }
+
+    .custom-checkbox-container li:has(input:checked) {
+        background: #cfe2ff;
+        border-left: 3px solid #0d6efd;
+    }
+
+    .form-section {
+        background: #f8f9fa;
+        padding: 1.5rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+        border: 1px solid #e9ecef;
+    }
+
+    .form-section h5 {
+        color: #0d6efd;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #0d6efd;
+    }
+
+    .required-label::after {
+        content: " *";
+        color: #dc3545;
+        font-weight: bold;
+    }
+
+    .payment-info {
+        display: none;
+        margin-top: 10px;
+    }
+
+    .payment-info.show {
+        display: block;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-plus-circle"></i>
+                            {% if user.user_type == 'university' %}
+                                Post University Project
+                            {% else %}
+                                Post Company Project
+                            {% endif %}
+                        </h4>
+                        <small>Fill in the details below to create your project</small>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <!-- Info Alert -->
+                        <div class="alert alert-info border-0 mb-4">
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                            {% if user.user_type == 'university' %}
+                                <strong>University Project:</strong> Your project will be automatically approved and immediately visible to students.
+                            {% else %}
+                                <strong>Company Project:</strong> Your project will be reviewed by the selected university before being published.
+                            {% endif %}
+                        </div>
+
+                        <form method="post" enctype="multipart/form-data" id="projectForm">
+                            {% csrf_token %}
+
+                            <!-- BASIC INFORMATION -->
+                            <div class="form-section">
+                                <h5><i class="bi bi-file-earmark-text me-2"></i>Basic Information</h5>
+
+                                {% if user.user_type != 'university' %}
+                                <div class="mb-3">
+                                    <label class="form-label required-label">Submit to University</label>
+                                    {{ form.university }}
+                                    <small class="form-text text-muted">Select which university should review this project</small>
+                                    {% if form.university.errors %}
+                                        <div class="text-danger small mt-1">{{ form.university.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+
+                                <div class="mb-3">
+                                    <label class="form-label required-label">Project Title</label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger small mt-1">{{ form.title.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Domain/Category</label>
+                                        {{ form.domain }}
+                                        {% if form.domain.errors %}
+                                            <div class="text-danger small mt-1">{{ form.domain.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Work Location Type</label>
+                                        {{ form.job_type }}
+                                        <small class="form-text text-muted">Remote, Hybrid, or On-site</small>
+                                        {% if form.job_type.errors %}
+                                            <div class="text-danger small mt-1">{{ form.job_type.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label required-label">Project Description</label>
+                                    {{ form.description }}
+                                    <small class="form-text text-muted">
+                                        Provide detailed description, objectives, and expected deliverables
+                                    </small>
+                                    {% if form.description.errors %}
+                                        <div class="text-danger small mt-1">{{ form.description.errors }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <!-- PROJECT REQUIREMENTS -->
+                            <div class="form-section">
+                                <h5><i class="bi bi-list-check me-2"></i>Project Requirements</h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label required-label">Required Skills</label>
+                                    {{ form.required_skills }}
+                                    <small class="form-text text-muted">Comma-separated (e.g., Python, Django, React)</small>
+                                    {% if form.required_skills.errors %}
+                                        <div class="text-danger small mt-1">{{ form.required_skills.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Team Type</label>
+                                        {{ form.team_type }}
+                                        {% if form.team_type.errors %}
+                                            <div class="text-danger small mt-1">{{ form.team_type.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Team Size</label>
+                                        {{ form.team_size }}
+                                        <small class="form-text text-muted">Number of students needed</small>
+                                        {% if form.team_size.errors %}
+                                            <div class="text-danger small mt-1">{{ form.team_size.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ELIGIBILITY CRITERIA -->
+                            <div class="form-section">
+                                <h5><i class="bi bi-person-check me-2"></i>Eligibility Criteria</h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Eligible Departments</label>
+                                    <small class="d-block text-muted mb-2">
+                                        Select departments eligible for this project (leave unchecked for all)
+                                    </small>
+                                    <div class="custom-checkbox-container">
+                                        {{ form.eligible_departments_list }}
+                                    </div>
+                                    {% if form.eligible_departments_list.errors %}
+                                        <div class="text-danger small mt-1">{{ form.eligible_departments_list.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Minimum GPA (Optional)</label>
+                                        {{ form.min_gpa }}
+                                        <small class="form-text text-muted">0-10 scale</small>
+                                        {% if form.min_gpa.errors %}
+                                            <div class="text-danger small mt-1">{{ form.min_gpa.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Eligible Years</label>
+                                        <small class="d-block text-muted mb-2">
+                                            Select eligible years (leave unchecked for all)
+                                        </small>
+                                        <div class="custom-checkbox-container">
+                                            {{ form.eligible_years_list }}
+                                        </div>
+                                        {% if form.eligible_years_list.errors %}
+                                            <div class="text-danger small mt-1">{{ form.eligible_years_list.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- REMUNERATION & TIMELINE -->
+                            <div class="form-section">
+                                <h5><i class="bi bi-currency-rupee me-2"></i>Remuneration & Timeline</h5>
+
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Remuneration Amount (₹)</label>
+                                        {{ form.payment_amount }}
+                                        <small class="form-text text-muted">Total project remuneration</small>
+                                        {% if form.payment_amount.errors %}
+                                            <div class="text-danger small mt-1">{{ form.payment_amount.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Remuneration Type</label>
+                                        {{ form.payment_type }}
+                                        {% if form.payment_type.errors %}
+                                            <div class="text-danger small mt-1">{{ form.payment_type.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <!-- Payment Type Info Boxes -->
+                                <div id="payment-fixed" class="alert alert-info payment-info">
+                                    <strong><i class="bi bi-info-circle"></i> Fixed Payment:</strong>
+                                    <p class="mb-0 small">Full amount paid when project is completed. Best for simple projects.</p>
+                                </div>
+
+                                <div id="payment-milestone" class="alert alert-warning payment-info">
+                                    <strong><i class="bi bi-star"></i> Milestone-Based Payment:</strong>
+                                    <p class="mb-0 small">Split payment across milestones. You'll create milestones after accepting a student. Best for complex projects.</p>
+                                </div>
+
+                                <div class="row mt-3">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Duration (Weeks)</label>
+                                        {{ form.duration_weeks }}
+                                        <small class="form-text text-muted">Expected project duration</small>
+                                        {% if form.duration_weeks.errors %}
+                                            <div class="text-danger small mt-1">{{ form.duration_weeks.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required-label">Project Closure Date</label>
+                                        {{ form.deadline }}
+                                        <small class="form-text text-muted">Final completion date</small>
+                                        {% if form.deadline.errors %}
+                                            <div class="text-danger small mt-1">{{ form.deadline.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- JOB DESCRIPTION -->
+                            <div class="form-section">
+                                <h5><i class="bi bi-file-earmark-pdf me-2"></i>Job Description (Optional)</h5>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Upload JD Document</label>
+                                    {{ form.attachment }}
+                                    <small class="form-text text-muted">PDF, DOC, DOCX - Max 10MB</small>
+                                    {% if form.attachment.errors %}
+                                        <div class="text-danger small mt-1">{{ form.attachment.errors }}</div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="alert alert-light border">
+                                    <small><strong><i class="bi bi-lightbulb"></i> Tip:</strong> Include project scope, deliverables, technical requirements, timeline, and communication expectations.</small>
+                                </div>
+                            </div>
+
+                            <!-- SUBMIT BUTTONS -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-send"></i>
+                                    {% if user.user_type == 'university' %}
+                                        Post Project
+                                    {% else %}
+                                        Submit for Review
+                                    {% endif %}
+                                </button>
+                                <a href="{% url 'accounts:dashboard' %}" class="btn btn-outline-secondary btn-lg">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Payment type information toggle
+    const paymentType = document.querySelector('[name="payment_type"]');
+    if (paymentType) {
+        function updatePaymentInfo() {
+            document.querySelectorAll('.payment-info').forEach(el => el.classList.remove('show'));
+            const selectedType = paymentType.value;
+            const infoBox = document.getElementById('payment-' + selectedType);
+            if (infoBox) {
+                infoBox.classList.add('show');
+            }
+        }
+        paymentType.addEventListener('change', updatePaymentInfo);
+        updatePaymentInfo(); // Initial
+    }
+
+    // Team size auto-adjust
+    const teamType = document.querySelector('[name="team_type"]');
+    const teamSizeField = document.querySelector('[name="team_size"]');
+    if (teamType && teamSizeField) {
+        teamType.addEventListener('change', function() {
+            if (this.value === 'individual') {
+                teamSizeField.value = '1';
+                teamSizeField.closest('.col-md-6').style.opacity = '0.5';
+            } else {
+                teamSizeField.closest('.col-md-6').style.opacity = '1';
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

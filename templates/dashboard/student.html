@@ -1,0 +1,207 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Student Dashboard - UIC Platform{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h2 class="fw-bold">Welcome back, {{ user.first_name }}!</h2>
+                <p class="text-muted">Here's your project overview</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <a href="{% url 'projects:list' %}" class="btn btn-primary">
+                    <i class="bi bi-search"></i> Browse Projects
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Cards - REMOVED TOTAL EARNED -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-briefcase-fill display-4 text-primary mb-2"></i>
+                        <h3 class="dashboard-stat">{{ active_projects }}</h3>
+                        <p class="text-muted mb-0">Active Projects</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-check-circle-fill display-4 text-success mb-2"></i>
+                        <h3 class="dashboard-stat">{{ completed_projects }}</h3>
+                        <p class="text-muted mb-0">Completed</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="card dashboard-card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-clock-fill display-4 text-warning mb-2"></i>
+                        <h3 class="dashboard-stat">{{ pending_applications }}</h3>
+                        <p class="text-muted mb-0">Pending Applications</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Active Projects -->
+            <div class="col-lg-8 mb-4">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="bi bi-folder-fill"></i> Active Projects</h5>
+                        <a href="{% url 'projects:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+                    </div>
+                    <div class="card-body">
+                        {% if profile.assigned_projects.all %}
+                            {% for project in profile.assigned_projects.all|slice:":5" %}
+                            <div class="d-flex justify-content-between align-items-start mb-3 pb-3 border-bottom">
+                                <div>
+                                    <h6 class="fw-bold mb-1">{{ project.title }}</h6>
+                                    <p class="text-muted small mb-1">{{ project.company.name }}</p>
+                                    <span class="badge bg-primary">{{ project.get_domain_display }}</span>
+                                </div>
+                                <div class="text-end">
+                                    <span class="status-badge status-{{ project.status }}">
+                                        {{ project.get_status_display }}
+                                    </span>
+                                    <br>
+                                    <small class="text-muted">Due: {{ project.deadline }}</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox display-3 text-muted mb-3"></i>
+                            <p class="text-muted">No active projects yet. Start browsing!</p>
+                            <a href="{% url 'projects:list' %}" class="btn btn-primary">Find Projects</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions & Profile -->
+            <div class="col-lg-4 mb-4">
+                <!-- Profile Card -->
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        {% if profile.profile_picture %}
+                        <img src="{{ profile.profile_picture.url }}" alt="Profile"
+                             class="profile-picture mb-3">
+                        {% else %}
+                        <div class="bg-light rounded-circle d-inline-block p-4 mb-3">
+                            <i class="bi bi-person-fill display-3 text-muted"></i>
+                        </div>
+                        {% endif %}
+                        <h5 class="fw-bold">{{ user.get_full_name }}</h5>
+                        <p class="text-muted">{{ profile.get_department_display }}</p>
+                        <p class="small">{{ profile.bio|truncatewords:15 }}</p>
+                        <div class="d-flex justify-content-center mb-3">
+                            <div class="text-center me-3">
+                                <strong>{{ profile.rating }}</strong>
+                                <br>
+                                <small class="text-muted">Rating</small>
+                            </div>
+                            <div class="text-center">
+                                <strong>{{ profile.projects_completed }}</strong>
+                                <br>
+                                <small class="text-muted">Projects</small>
+                            </div>
+                        </div>
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-sm btn-outline-primary w-100">
+                            View Profile
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Quick Actions</h6>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="{% url 'projects:list' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-search"></i> Browse Projects
+                        </a>
+                        <a href="{% url 'projects:my_applications' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-file-text"></i> My Applications
+                        </a>
+                        <a href="{% url 'accounts:profile_edit' %}" class="list-group-item list-group-item-action">
+                            <i class="bi bi-pencil"></i> Edit Profile
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action">
+                            <i class="bi bi-chat"></i> Messages
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Applications -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-send-fill"></i> Recent Applications</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if profile.applications.all %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Project</th>
+                                        <th>Company</th>
+                                        <th>Applied On</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for app in profile.applications.all|slice:":5" %}
+                                    <tr>
+                                        <td>{{ app.project.title }}</td>
+                                        <td>{{ app.project.company.name }}</td>
+                                        <td>{{ app.created_at|date:"M d, Y" }}</td>
+                                        <td>
+                                            {% if app.status == 'pending' %}
+                                                <span class="badge bg-warning">⏳ University Review</span>
+                                            {% elif app.status == 'university_approved' %}
+                                                <span class="badge bg-info">✓ University Approved</span>
+                                            {% elif app.status == 'university_rejected' %}
+                                                <span class="badge bg-danger">✗ University Rejected</span>
+                                            {% elif app.status == 'accepted' %}
+                                                <span class="badge bg-success">✓ Accepted</span>
+                                            {% elif app.status == 'rejected' %}
+                                                <span class="badge bg-danger">✗ Rejected</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <a href="{% url 'projects:detail' app.project.pk %}"
+                                               class="btn btn-sm btn-outline-primary">
+                                                View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="text-center py-4">
+                            <p class="text-muted">No applications yet</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

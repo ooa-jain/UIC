@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Register - UIC Platform{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+
+                <!-- User Type Selection Tabs -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="text-center mb-3">I want to register as:</h5>
+                        <div class="d-flex justify-content-center gap-2">
+                            <a href="?type=student"
+                               class="btn {% if user_type == 'student' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                <i class="bi bi-mortarboard"></i> Student
+                            </a>
+                            <a href="?type=company"
+                               class="btn {% if user_type == 'company' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                <i class="bi bi-building"></i> Company
+                            </a>
+                            <a href="?type=university"
+                               class="btn {% if user_type == 'university' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                                <i class="bi bi-bank"></i> University
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registration Form -->
+                <div class="card shadow">
+                    <div class="card-header
+                        {% if user_type == 'student' %}bg-primary
+                        {% elif user_type == 'company' %}bg-success
+                        {% else %}bg-info{% endif %} text-white">
+                        <h4 class="mb-0">
+                            {% if user_type == 'student' %}
+                                <i class="bi bi-mortarboard"></i> Student Registration
+                            {% elif user_type == 'company' %}
+                                <i class="bi bi-building"></i> Company Registration
+                            {% else %}
+                                <i class="bi bi-bank"></i> University Registration
+                            {% endif %}
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+
+                        {% if messages %}
+                            {% for message in messages %}
+                            <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %} alert-dismissible fade show">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+
+                            <!-- Explicit submit button in case crispy doesn't render it -->
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mt-3">
+                                {% if user_type == 'student' %}
+                                    <i class="bi bi-mortarboard"></i> Register as Student
+                                {% elif user_type == 'company' %}
+                                    <i class="bi bi-building"></i> Register as Company
+                                {% else %}
+                                    <i class="bi bi-bank"></i> Register as University
+                                {% endif %}
+                            </button>
+                        </form>
+
+                        <hr>
+                        <p class="text-center mb-0">
+                            Already have an account?
+                            <a href="{% url 'accounts:login' %}">Login here</a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Info Cards -->
+                <div class="card mt-4">
+                    <div class="card-body">
+                        {% if user_type == 'student' %}
+                            <h6><i class="bi bi-info-circle"></i> Student Benefits:</h6>
+                            <ul class="mb-0 small">
+                                <li>Browse and apply to real-world projects</li>
+                                <li>Build your portfolio with paid work</li>
+                                <li>Get ratings and reviews from companies</li>
+                            </ul>
+                        {% elif user_type == 'company' %}
+                            <h6><i class="bi bi-info-circle"></i> Company Benefits:</h6>
+                            <ul class="mb-0 small">
+                                <li>Post projects and find talented students</li>
+                                <li>Get quality work at competitive rates</li>
+                                <li>Build relationships with universities</li>
+                            </ul>
+                        {% else %}
+                            <h6><i class="bi bi-info-circle"></i> University Benefits:</h6>
+                            <ul class="mb-0 small">
+                                <li>Review and approve projects for your students</li>
+                                <li>Monitor student participation and earnings</li>
+                                <li>Verify and manage company partnerships</li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

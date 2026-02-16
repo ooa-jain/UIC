@@ -1,0 +1,440 @@
+/* ==============================================================
+   main.css – Global styles for UIC Platform
+   Works with base.html + Bootstrap 5 + Bootstrap Icons
+   ============================================================== */
+
+/* --------------------------------------------------------------
+   1. Imports & Root Variables
+   -------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --primary: #4361ee;
+    --primary-light: #eef1ff;
+    --primary-gradient: linear-gradient(135deg, #4361ee, #7209b7);
+    --success: #2ecc71;
+    --info: #4ea1d3;
+    --warning: #f39c12;
+    --danger: #e74c3c;
+    --dark: #2d3436;
+    --light: #f8f9fa;
+    --gray: #95a5a6;
+    --border-radius: 16px;
+    --shadow-sm: 0 5px 20px rgba(0,0,0,0.05);
+    --shadow-md: 0 15px 35px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+}
+
+/* --------------------------------------------------------------
+   2. Global Resets & Typography
+   -------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: var(--dark);
+    line-height: 1.7;
+    background-color: #fff;
+    margin: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+a {
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* --------------------------------------------------------------
+   3. Navbar (Already in base.html – small tweaks)
+   -------------------------------------------------------------- */
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+/* Dropdown */
+.dropdown-item {
+    font-weight: 500;
+}
+.dropdown-item:hover {
+    background: var(--primary-light);
+    color: var(--primary) !important;
+}
+
+/* --------------------------------------------------------------
+   4. Hero Section
+   -------------------------------------------------------------- */
+.hero-section {
+    background: linear-gradient(135deg, #f8f9ff 0%, #eef1ff 100%);
+    padding: 100px 0;
+    overflow: hidden;
+    position: relative;
+}
+
+.hero-section h1 {
+    font-weight: 800;
+    font-size: 3.2rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1.5rem;
+}
+
+.hero-section .lead {
+    font-size: 1.2rem;
+    color: #555;
+    max-width: 520px;
+    margin-bottom: 2rem;
+}
+
+.hero-section img {
+    transition: transform 0.5s ease;
+    max-height: 480px;
+}
+
+.hero-section img:hover {
+    transform: translateY(-10px);
+}
+
+/* Buttons */
+.btn-primary {
+    background: var(--primary);
+    border: none;
+    padding: 12px 32px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: var(--transition);
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+}
+
+.btn-primary:hover {
+    background: #3651d4;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(67, 97, 238, 0.4);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    padding: 10px 30px;
+    font-weight: 600;
+    border-radius: 12px;
+    transition: var(--transition);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateY(-3px);
+}
+
+/* --------------------------------------------------------------
+   5. Stats Section
+   -------------------------------------------------------------- */
+.stats-section {
+    padding: 80px 0;
+    background: white;
+}
+
+.stat-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 30px 20px;
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.4s ease;
+    opacity: 0;
+}
+
+.stat-card.animate {
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.stat-card:hover {
+    transform: translateY(-12px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-card i {
+    font-size: 3rem;
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    margin: 15px 0 8px;
+    color: var(--dark);
+}
+
+.stat-card p {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--gray);
+}
+
+/* --------------------------------------------------------------
+   6. Features Section
+   -------------------------------------------------------------- */
+.features-section {
+    padding: 100px 0;
+    background: var(--light);
+}
+
+.features-section h2,
+.domains-section h2 {
+    font-weight: 800;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    position: relative;
+}
+
+.features-section h2::after,
+.domains-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: all 0.4s ease;
+    height: 100%;
+    opacity: 0;
+}
+
+.card.animate {
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-body {
+    padding: 2rem;
+}
+
+.card i {
+    font-size: 2.8rem;
+}
+
+.card h4 {
+    font-weight: 700;
+    margin: 1.5rem 0 1rem;
+    font-size: 1.4rem;
+}
+
+.card ul li {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+}
+
+.card ul li i {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+}
+
+/* --------------------------------------------------------------
+   7. Domains Section
+   -------------------------------------------------------------- */
+.domains-section {
+    padding: 100px 0;
+    background: white;
+}
+
+.domain-card {
+    background: white;
+    border-radius: var(--border-radius);
+    padding: 25px 15px;
+    text-align: center;
+    height: 100%;
+    box-shadow: var(--shadow-sm);
+    border: 1px solid #eee;
+    transition: all 0.4s ease;
+    opacity: 0;
+}
+
+.domain-card.animate {
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.domain-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(67, 97, 238, 0.15);
+    border-color: var(--primary);
+}
+
+.domain-card i {
+    font-size: 2.5rem;
+    transition: transform 0.3s ease;
+}
+
+.domain-card:hover i {
+    transform: scale(1.2);
+}
+
+.domain-card h5 {
+    margin: 15px 0 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* --------------------------------------------------------------
+   8. CTA Section
+   -------------------------------------------------------------- */
+.cta-section {
+    background: var(--primary-gradient);
+    padding: 100px 0;
+    color: white;
+    text-align: center;
+}
+
+.cta-section h2 {
+    font-weight: 800;
+    font-size: 2.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.cta-section .lead {
+    font-size: 1.3rem;
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    opacity: 0.9;
+}
+
+.cta-section .btn-light {
+    background: white;
+    color: var(--primary);
+    font-weight: 700;
+    padding: 14px 40px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    transition: var(--transition);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.cta-section .btn-light:hover {
+    background: #f8f9fa;
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* --------------------------------------------------------------
+   9. Footer
+   -------------------------------------------------------------- */
+footer {
+    background: #1a1a1a;
+    color: #aaa;
+    font-size: 0.95rem;
+}
+
+footer a {
+    color: #ddd;
+    font-weight: 500;
+}
+
+footer a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* --------------------------------------------------------------
+   10. Animations
+   -------------------------------------------------------------- */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --------------------------------------------------------------
+   11. Responsive Adjustments
+   -------------------------------------------------------------- */
+@media (max-width: 992px) {
+    .hero-section h1 {
+        font-size: 2.8rem;
+    }
+    .hero-section,
+    .features-section,
+    .domains-section,
+    .cta-section {
+        padding: 80px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 70px 0;
+        text-align: center;
+    }
+    .hero-section h1 {
+        font-size: 2.4rem;
+    }
+    .hero-section .lead {
+        font-size: 1.1rem;
+    }
+    .hero-section .d-flex {
+        justify-content: center;
+    }
+    .features-section h2,
+    .domains-section h2,
+    .cta-section h2 {
+        font-size: 2rem;
+    }
+    .stat-card,
+    .card,
+    .domain-card {
+        margin-bottom: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero-section h1 {
+        font-size: 2.1rem;
+    }
+    .btn-lg {
+        padding: 10px 24px;
+        font-size: 1rem;
+    }
+}

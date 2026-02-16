@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Verification Rejected{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow text-center border-danger">
+                    <div class="card-body p-5">
+                        <div class="mb-4">
+                            <i class="bi bi-x-circle display-1 text-danger"></i>
+                        </div>
+                        
+                        <h3 class="fw-bold mb-3">Verification Rejected</h3>
+                        
+                        <p class="text-muted mb-4">
+                            Unfortunately, <strong>{{ student.university.name }}</strong> could not verify your profile.
+                        </p>
+                        
+                        {% if student.rejection_reason %}
+                        <div class="alert alert-danger text-start">
+                            <h6><i class="bi bi-exclamation-triangle"></i> Reason:</h6>
+                            <p class="mb-0">{{ student.rejection_reason }}</p>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="alert alert-info text-start">
+                            <h6><i class="bi bi-info-circle"></i> What can you do?</h6>
+                            <ul class="mb-0 small">
+                                <li>Update your profile with correct information</li>
+                                <li>Use your official university email</li>
+                                <li>Ensure your USN/Student ID is correct</li>
+                                <li>Contact your university if you need help</li>
+                            </ul>
+                        </div>
+                        
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-primary btn-lg w-100 mb-2">
+                            <i class="bi bi-pencil"></i> Update Profile & Resubmit
+                        </a>
+                        
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

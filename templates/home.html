@@ -1,0 +1,547 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section with Gradient Background -->
+<div class="hero-section position-relative overflow-hidden mb-5">
+    <div class="hero-gradient"></div>
+    <div class="container position-relative z-1 py-5">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-7 text-center text-lg-start mb-4 mb-lg-0">
+                <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-3 animate-fade-in">
+                    <i class="bi bi-star-fill me-1"></i> Trusted by 500+ Universities
+                </span>
+                <h1 class="display-3 fw-bold mb-4 animate-slide-up">
+                    Bridge the Gap Between
+                    <span class="text-gradient">Learning & Industry</span>
+                </h1>
+                <p class="lead mb-4 text-muted animate-slide-up" style="animation-delay: 0.2s;">
+                    Connect students with real-world projects, help companies find fresh talent,
+                    and empower universities to prepare graduates for tomorrow's challenges.
+                </p>
+                <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center justify-content-lg-start animate-slide-up" style="animation-delay: 0.4s;">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg px-5 py-3 shadow-lg hover-lift">
+                        <i class="bi bi-rocket-takeoff me-2"></i>Get Started Free
+                    </a>
+                    <a href="#how-it-works" class="btn btn-outline-secondary btn-lg px-5 py-3 hover-lift">
+                        <i class="bi bi-play-circle me-2"></i>See How It Works
+                    </a>
+                </div>
+
+                <!-- Trust Indicators -->
+                <div class="mt-5 d-flex flex-wrap gap-4 justify-content-center justify-content-lg-start text-muted small animate-fade-in" style="animation-delay: 0.6s;">
+                    <div><i class="bi bi-check-circle-fill text-success me-1"></i> No credit card required</div>
+                    <div><i class="bi bi-check-circle-fill text-success me-1"></i> Free for students</div>
+                    <div><i class="bi bi-check-circle-fill text-success me-1"></i> Setup in 2 minutes</div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="hero-illustration animate-float">
+                    <div class="illustration-card card-shadow-lg p-4 bg-white rounded-4 mb-3 hover-lift">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box bg-primary bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-lightning-charge-fill text-primary fs-3"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Live Project Posted</h6>
+                                <small class="text-muted">AI/ML Development</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="illustration-card card-shadow-lg p-4 bg-white rounded-4 ms-5 hover-lift" style="animation-delay: 0.2s;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box bg-success bg-opacity-10 rounded-3 p-3">
+                                <i class="bi bi-trophy-fill text-success fs-3"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0 fw-bold">Student Matched</h6>
+                                <small class="text-muted">₹15,000 opportunity</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="container mb-5">
+    <div class="row g-4 text-center">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <h2 class="display-4 fw-bold text-primary mb-0 counter" data-target="2500">0</h2>
+                <p class="text-muted mb-0">Active Students</p>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <h2 class="display-4 fw-bold text-success mb-0 counter" data-target="350">0</h2>
+                <p class="text-muted mb-0">Partner Companies</p>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <h2 class="display-4 fw-bold text-info mb-0 counter" data-target="1800">0</h2>
+                <p class="text-muted mb-0">Projects Completed</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Role Cards Section -->
+<div class="container mb-5" id="how-it-works">
+    <div class="text-center mb-5">
+        <h2 class="display-5 fw-bold mb-3">Built for Everyone in the Ecosystem</h2>
+        <p class="lead text-muted">Whether you're learning, hiring, or teaching—we've got you covered.</p>
+    </div>
+
+    <div class="row g-4">
+        <!-- Students Card -->
+        <div class="col-lg-4">
+            <div class="card role-card border-0 card-shadow h-100 hover-lift">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="icon-wrapper mb-4">
+                        <div class="icon-circle bg-primary bg-opacity-10">
+                            <i class="bi bi-person-workspace display-4 text-primary"></i>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-primary-subtle text-primary mb-3">For Students</span>
+                    <h3 class="fw-bold mb-3">Launch Your Career</h3>
+                    <p class="text-muted mb-4">
+                        Skip the "entry-level experience required" paradox. Work on real projects,
+                        build your portfolio, and get paid while learning.
+                    </p>
+
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            Access 500+ live projects
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            Earn ₹10k-50k per project
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            Get mentored by industry experts
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-primary me-2"></i>
+                            Build a standout portfolio
+                        </li>
+                    </ul>
+
+                    <a href="/admin/" class="btn btn-primary w-100 py-3 fw-semibold">
+                        Join as Student <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Companies Card -->
+        <div class="col-lg-4">
+            <div class="card role-card border-0 card-shadow h-100 hover-lift featured-card">
+                <div class="featured-badge">
+                    <span class="badge bg-success">Most Popular</span>
+                </div>
+                <div class="card-body p-4 p-lg-5">
+                    <div class="icon-wrapper mb-4">
+                        <div class="icon-circle bg-success bg-opacity-10">
+                            <i class="bi bi-building display-4 text-success"></i>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-success-subtle text-success mb-3">For Companies</span>
+                    <h3 class="fw-bold mb-3">Find Fresh Talent</h3>
+                    <p class="text-muted mb-4">
+                        Tap into a pool of motivated students eager to prove themselves.
+                        From MVPs to full-scale projects—get quality work at competitive rates.
+                    </p>
+
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Post projects in under 5 minutes
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            Access pre-vetted student talent
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            University-backed quality assurance
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            70% cost savings vs agencies
+                        </li>
+                    </ul>
+
+                    <a href="/admin/" class="btn btn-success w-100 py-3 fw-semibold">
+                        Post a Project <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Universities Card -->
+        <div class="col-lg-4">
+            <div class="card role-card border-0 card-shadow h-100 hover-lift">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="icon-wrapper mb-4">
+                        <div class="icon-circle bg-warning bg-opacity-10">
+                            <i class="bi bi-mortarboard display-4 text-warning"></i>
+                        </div>
+                    </div>
+
+                    <span class="badge bg-warning-subtle text-warning mb-3">For Universities</span>
+                    <h3 class="fw-bold mb-3">Prepare Industry-Ready Graduates</h3>
+                    <p class="text-muted mb-4">
+                        Bridge the academia-industry gap. Monitor student progress, approve projects,
+                        and showcase your institution's impact to potential employers.
+                    </p>
+
+                    <ul class="list-unstyled mb-4">
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            Comprehensive admin dashboard
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            Track student performance & outcomes
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            Approve & manage project collaborations
+                        </li>
+                        <li class="mb-2">
+                            <i class="bi bi-check-circle-fill text-warning me-2"></i>
+                            Strengthen industry partnerships
+                        </li>
+                    </ul>
+
+                    <a href="/admin/" class="btn btn-warning w-100 py-3 fw-semibold">
+                        Partner With Us <i class="bi bi-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- How It Works Section -->
+<div class="container mb-5 py-5">
+    <div class="row align-items-center">
+        <div class="col-lg-5 mb-4 mb-lg-0">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill mb-3">
+                Simple Process
+            </span>
+            <h2 class="display-5 fw-bold mb-4">From Posting to Completion in Days, Not Months</h2>
+            <p class="lead text-muted mb-4">
+                Our streamlined platform removes the friction from university-industry collaboration.
+            </p>
+        </div>
+        <div class="col-lg-7">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-primary">1</div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold">Company Posts Project</h5>
+                        <p class="text-muted mb-0">Define requirements, budget, and timeline in minutes.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-primary">2</div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold">University Reviews & Approves</h5>
+                        <p class="text-muted mb-0">Quick validation ensures quality and relevance.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-primary">3</div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold">Students Apply & Get Matched</h5>
+                        <p class="text-muted mb-0">Smart matching connects the right talent with the right projects.</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-marker bg-success">4</div>
+                    <div class="timeline-content">
+                        <h5 class="fw-bold">Collaborate & Deliver</h5>
+                        <p class="text-muted mb-0">Built-in tools for communication, milestones, and payments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="container my-5">
+    <div class="cta-section card-shadow-lg rounded-4 p-5 text-center position-relative overflow-hidden">
+        <div class="cta-gradient"></div>
+        <div class="position-relative z-1">
+            <h2 class="display-5 fw-bold text-white mb-3">Ready to Transform How Education Meets Industry?</h2>
+            <p class="lead text-white-50 mb-4">Join thousands already building the future of work and learning.</p>
+            <a href="{% url 'accounts:dashboard' %}" class="btn btn-light btn-lg px-5 py-3 shadow hover-lift">
+                <i class="bi bi-rocket-takeoff me-2"></i>Get Started Now
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Hero Section */
+.hero-section {
+    position: relative;
+    background: linear-gradient(135deg, #f8f9ff 0%, #fff5f8 100%);
+}
+
+.hero-gradient {
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 80%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(13, 110, 253, 0.1) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.min-vh-50 {
+    min-height: 50vh;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.8s ease-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.8s ease-out;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Cards */
+.card-shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.card-shadow-lg {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Role Cards */
+.role-card {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.role-card:hover {
+    transform: translateY(-10px);
+}
+
+.icon-wrapper {
+    display: inline-block;
+}
+
+.icon-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.featured-card {
+    border: 2px solid #198754 !important;
+}
+
+.featured-badge {
+    position: absolute;
+    top: -12px;
+    right: 20px;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding-left: 30px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 30px;
+    bottom: 30px;
+    width: 2px;
+    background: linear-gradient(to bottom, #0d6efd, #198754);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.timeline-marker {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    flex-shrink: 0;
+    margin-right: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-content {
+    flex: 1;
+    padding-top: 5px;
+}
+
+/* CTA Section */
+.cta-section {
+    background: linear-gradient(135deg, #0d6efd 0%, #0dcaf0 100%);
+    border: none;
+}
+
+.cta-gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+/* Stats Counter */
+.stat-card {
+    padding: 20px;
+}
+
+.counter {
+    transition: all 0.3s ease;
+}
+
+/* Button Enhancements */
+.btn {
+    transition: all 0.3s ease;
+    border-radius: 12px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 991px) {
+    .display-3 {
+        font-size: 2.5rem;
+    }
+
+    .timeline {
+        padding-left: 20px;
+    }
+
+    .timeline-marker {
+        width: 35px;
+        height: 35px;
+        font-size: 14px;
+    }
+}
+</style>
+
+<script>
+// Counter Animation
+document.addEventListener('DOMContentLoaded', function() {
+    const counters = document.querySelectorAll('.counter');
+    const speed = 200;
+
+    const animateCounter = (counter) => {
+        const target = +counter.getAttribute('data-target');
+        const count = +counter.innerText;
+        const increment = target / speed;
+
+        if (count < target) {
+            counter.innerText = Math.ceil(count + increment);
+            setTimeout(() => animateCounter(counter), 1);
+        } else {
+            counter.innerText = target + '+';
+        }
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateCounter(entry.target);
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.5 });
+
+    counters.forEach(counter => observer.observe(counter));
+});
+</script>
+{% endblock %}

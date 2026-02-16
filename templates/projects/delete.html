@@ -1,0 +1,110 @@
+<!-- templates/projects/delete.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Delete Project - {{ project.title }}{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card shadow border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h4 class="mb-0">
+                            <i class="bi bi-exclamation-triangle-fill"></i> Delete Project
+                        </h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="alert alert-danger">
+                            <h5 class="alert-heading">
+                                <i class="bi bi-exclamation-circle"></i> Warning!
+                            </h5>
+                            <p class="mb-0">This action cannot be undone. All associated data will be permanently deleted.</p>
+                        </div>
+
+                        <h5 class="fw-bold mb-3">Project Details:</h5>
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6 class="fw-bold">{{ project.title }}</h6>
+                                <p class="text-muted mb-2">{{ project.description|truncatewords:30 }}</p>
+                                <div class="mb-2">
+                                    <span class="badge bg-primary">{{ project.get_domain_display }}</span>
+                                    <span class="badge bg-success">₹{{ project.payment_amount }}</span>
+                                    <span class="badge bg-info">{{ project.get_status_display }}</span>
+                                </div>
+                                <small class="text-muted">
+                                    Created: {{ project.created_at|date:"M d, Y" }}
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Show what will be deleted -->
+                        <div class="alert alert-warning">
+                            <strong>The following will be deleted:</strong>
+                            <ul class="mb-0 mt-2">
+                                <li>Project information and attachments</li>
+                                {% if project.applications.exists %}
+                                <li><strong>{{ project.applications.count }}</strong> application(s)</li>
+                                {% endif %}
+                                {% if project.milestones.exists %}
+                                <li><strong>{{ project.milestones.count }}</strong> milestone(s)</li>
+                                {% endif %}
+                                {% if project.deliverables.exists %}
+                                <li><strong>{{ project.deliverables.count }}</strong> deliverable(s)</li>
+                                {% endif %}
+                                <li>All related conversations and messages</li>
+                            </ul>
+                        </div>
+
+                        <!-- Deletion restrictions -->
+                        {% if project.status == 'in_progress' or project.status == 'completed' %}
+                        <div class="alert alert-danger">
+                            <strong>Cannot Delete!</strong>
+                            <p class="mb-0">Projects that are in progress or completed cannot be deleted. Please contact support if you need to remove this project.</p>
+                        </div>
+                        <a href="{% url 'projects:detail' project.pk %}" class="btn btn-secondary w-100">
+                            <i class="bi bi-arrow-left"></i> Go Back
+                        </a>
+                        {% else %}
+                        <!-- Confirmation Form -->
+                        <form method="post" id="deleteForm">
+                            {% csrf_token %}
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="confirmDelete" required>
+                                <label class="form-check-label" for="confirmDelete">
+                                    I understand that this action is permanent and cannot be undone
+                                </label>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-danger btn-lg" id="deleteBtn" disabled>
+                                    <i class="bi bi-trash-fill"></i> Yes, Delete This Project
+                                </button>
+                                <a href="{% url 'projects:detail' project.pk %}" class="btn btn-secondary btn-lg">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </a>
+                            </div>
+                        </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const checkbox = document.getElementById('confirmDelete');
+    const deleteBtn = document.getElementById('deleteBtn');
+
+    if (checkbox && deleteBtn) {
+        checkbox.addEventListener('change', function() {
+            deleteBtn.disabled = !this.checked;
+        });
+    }
+});
+</script>
+{% endblock %}

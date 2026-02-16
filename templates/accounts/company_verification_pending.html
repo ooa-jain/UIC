@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Verification Pending{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light min-vh-100 d-flex align-items-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow text-center">
+                    <div class="card-body p-5">
+                        <div class="mb-4">
+                            <i class="bi bi-hourglass-split display-1 text-warning"></i>
+                        </div>
+                        
+                        <h3 class="fw-bold mb-3">Company Verification Pending</h3>
+                        
+                        <p class="text-muted mb-4">
+                            Your company profile has been submitted for verification.
+                            Universities will review your registration details and documents.
+                        </p>
+                        
+                        <div class="alert alert-info text-start">
+                            <h6><i class="bi bi-info-circle"></i> Verification Process:</h6>
+                            <ol class="mb-0 small">
+                                <li>Universities review your company details</li>
+                                <li>They verify your registration number and documents</li>
+                                <li>They check your official company email</li>
+                                <li>Once approved, you can post projects</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="card mb-4">
+                            <div class="card-body text-start">
+                                <h6 class="fw-bold">Submitted Details:</h6>
+                                <p class="mb-1"><strong>Company:</strong> {{ company.name }}</p>
+                                <p class="mb-1"><strong>SPOC:</strong> {{ company.contact_person }}</p>
+                                <p class="mb-1"><strong>Email:</strong> {{ company.contact_email }}</p>
+                                <p class="mb-1"><strong>Registration No:</strong> {{ company.company_registration_number }}</p>
+                                <p class="mb-0"><strong>Submitted:</strong> {{ company.created_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                        
+                        <a href="{% url 'accounts:profile_edit' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-pencil"></i> Edit Profile
+                        </a>
+                        
+                        <a href="{% url 'accounts:logout' %}" class="btn btn-outline-secondary ms-2">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
